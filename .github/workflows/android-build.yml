@@ -1,0 +1,48 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Accept SDK licenses
+        run: |
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        env:
+          ANDROID_SDK_ROOT: /opt/android
+
+      - name: Install SDK packages
+        run: |
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
+        env:
+          ANDROID_SDK_ROOT: /opt/android
+          PATH: ${{ env.PATH }}:/opt/android/platform-tools:/opt/android/cmdline-tools/latest/bin
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew || true
+
+      - name: Build debug and androidTest APKs
+        run: ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest --no-daemon --stacktrace
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apks
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/androidTest/debug/*.apk

@@ -1,0 +1,2 @@
+rootProject.name = 'aimodelauncher'
+include ':app'
