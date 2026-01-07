@@ -15,9 +15,6 @@
 			"mavenVersion": "latest",
 			"antVersion": "latest"
 		},
-		"ghcr.io/devcontainers-extra/features/meson-asdf:latest": {
-			"version": "latest"
-		},
 		"ghcr.io/balazs23/devcontainers-features/bazel:latest": {
 			"bazelisk": "latest"
 		},
