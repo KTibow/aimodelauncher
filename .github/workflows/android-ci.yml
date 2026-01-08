@@ -49,13 +49,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build debug and androidTest APKs
-        run: ./gradlew clean :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace --warning-mode all
+      - name: Build debug APK
+        run: ./gradlew clean :app:assembleDebug --stacktrace --warning-mode all
 
-      - name: Upload APKs
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-apks
+          name: android-apk
           path: |
             app/build/outputs/apk/debug/*.apk
-            app/build/outputs/apk/androidTest/debug/*.apk
