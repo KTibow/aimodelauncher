@@ -3,12 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="24dp">
 
-    <TextView
-        android:id="@+id/hello"
+    <EditText
+        android:id="@+id/query_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Type a search query"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <Button
+        android:id="@+id/search_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello from aimodelauncher" />
+        android:text="Open in Google AI Mode"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>
