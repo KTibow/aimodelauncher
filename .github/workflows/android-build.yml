@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: /opt/android
+      ANDROID_HOME: /opt/android
 
     steps:
       - name: Checkout
@@ -18,18 +21,25 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Accept SDK licenses
+      - name: Install Android SDK commandline tools
         run: |
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        env:
-          ANDROID_SDK_ROOT: /opt/android
+          sudo mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+          cd "$ANDROID_SDK_ROOT/cmdline-tools"
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          sudo unzip -q commandlinetools-linux-11076708_latest.zip -d latest
+          sudo rm commandlinetools-linux-11076708_latest.zip
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+
+      - name: Accept SDK licenses
+        run: yes | sudo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT"
 
       - name: Install SDK packages
         run: |
-          sdkmanager "platform-tools" "platforms;android-33" "build-tools;34.0.0"
-        env:
-          ANDROID_SDK_ROOT: /opt/android
-          PATH: ${{ env.PATH }}:/opt/android/platform-tools:/opt/android/cmdline-tools/latest/bin
+          sudo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" \
+            "platform-tools" \
+            "platforms;android-34" "platforms;android-35" \
+            "build-tools;34.0.0" "build-tools;35.0.0"
 
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew || true
